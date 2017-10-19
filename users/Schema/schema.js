@@ -8,13 +8,31 @@ const {
     GraphQLSchema //Takes in a root query, and returns a GraphQL Schema 
 } = graphql;
 
+//must define above UserType
+const CompanyType = new GraphQLObjectType({
+    name: 'Company',
+    fields: {
+        id: {type: GraphQLString},
+        name: {type: GraphQLString},
+        description: {type: GraphQLString}
+    }
+});
+
 //This object instructs graphql what a user object should look like
 const UserType = new GraphQLObjectType({
     name: 'User',
     fields: {
         id: {type: GraphQLString},
         firstName: {type: GraphQLString},
-        age: {type: GraphQLInt}
+        age: {type: GraphQLInt},
+        company: {
+            type: CompanyType, 
+//Need to return the company associated with a given user
+            resolve(parentValue, args) {
+                return axios.get(`http://localhost:3000/companies/${parentValue.companyId}`)
+                .then(resp => resp.data);
+            }
+        }
     }
 });
 
