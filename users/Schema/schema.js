@@ -47,7 +47,16 @@ const RootQuery = new GraphQLObjectType({
                 .then (resp => resp.data); //take response, return the data 
                 //Same as a fetch request
             }
-        } //args = arguments to return the corresponding user.
+        },
+        company: {
+            type: CompanyType,
+            args: { id: { type: GraphQLString } },
+            resolve(parentValue, args) {
+                return axios.get(`http://localhost:3000/companies/${args.id}`)
+                .then(resp => resp.data);
+            }
+        }
+         //args = arguments to return the corresponding user.
     } //If you give me an id, I will give you back the UserType you want
 });
 
