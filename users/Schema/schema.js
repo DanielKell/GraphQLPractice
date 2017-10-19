@@ -6,7 +6,8 @@ const {
     GraphQLString,
     GraphQLInt,
     GraphQLSchema, //Takes in a root query, and returns a GraphQL Schema 
-    GraphQLList
+    GraphQLList, //Will return multiple instances, instead of a single one
+    GraphQLNonNull //A mutation value can't be null
 } = graphql;
 
 //must define above UserType
@@ -68,6 +69,25 @@ const RootQuery = new GraphQLObjectType({
     } //If you give me an id, I will give you back the UserType you want
 });
 
+const mutation = new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+        addUser: {
+            type: UserType, //type of data we are going to return in the resolve
+            args: {
+                firstName: {type: new GraphQLNonNull(GraphQLString) }, //Can't be null!
+                age: {type: new GraphQLNonNull(GraphQLInt) },
+                companyId: {type: GraphQLString}
+            },
+            resolve(parentValue, {firstName, age}) {
+                return axios.post('http://localhost:3000/users', { firstName, age})
+                .then(resp => resp.data);
+            }
+        }
+    }
+});
+
 module.exports = new GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation
 });
