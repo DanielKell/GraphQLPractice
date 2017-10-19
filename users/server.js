@@ -6,7 +6,7 @@ const app = express();
 
 //How we wire up middleware to express: app.use
 app.use('/graphql', expressGraphQL({
-    schema,
+    schema: schema,
     graphiql: true
 })); 
 
